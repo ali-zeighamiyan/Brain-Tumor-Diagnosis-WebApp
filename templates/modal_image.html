@@ -1,0 +1,100 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="static/modal_images.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://kit.fontawesome.com/22a4e0612a.js" ></script>
+
+        <!-- Trigger the Modal -->
+    </head>
+
+    <body>
+        <!-- <img id="myImg" src="static/images/brain-tumor.jpg" alt="Snow"> -->
+
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+    
+        <!-- The Close Button -->
+        <span class="close">&times;</span>
+        <button id="delete-img" class="delete-button"><i class="fa fa-trash"></i></button>
+    
+        <!-- Modal Content (The Image) -->
+        <img class="modal-content" id="img01" style="height: 85%; width: auto;">
+    
+        <!-- Modal Caption (Image Text) -->
+        <div id="caption"></div>
+        </div>
+    </body>
+
+
+    <script>
+        function UrlExists(url){
+    var http = new XMLHttpRequest();
+    http.open('GET', url, false);
+    http.send();
+        
+    return http.status!=404;
+    
+};
+    
+
+    
+        // Get the modal
+    var modal = document.getElementById("myModal");
+    var i= localStorage.folder_id;
+    // Get the image and insert it inside the modal - use its "alt" text as a caption
+    // var img = document.getElementById(`image${i}`);
+    var modalImg = document.getElementById("img01");
+    // var captionText = document.getElementById("caption");
+   
+    mri_file = `static/doctors/${localStorage.username}/${i}/mri.png`;
+    // console.log(mri_file);
+    try{
+        if (UrlExists(mri_file)) {
+        modal.style.display = "block";
+        modalImg.src = mri_file;
+    }
+
+    else {
+        alert("You have not uploaded the photo yet");
+        modal.style.display = "none";
+        document.getElementById("modal_images_content").innerHTML = "";
+
+
+
+    }
+    } catch{
+        alert("You have not uploaded the photo yet");
+        modal.style.display = "none";
+        document.getElementById("modal_images_content").innerHTML = "";
+
+    }
+    
+    
+
+
+       
+    // captionText.innerHTML = this.alt;
+
+
+    var span = document.getElementsByClassName("close")[0];
+
+    var trash = document.getElementById("delete-img")
+    
+    // Get the <span> element that closes the modal
+    
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+        document.getElementById("modal_images_content").innerHTML = "";
+        
+    };
+
+    trash.onclick = function () {
+        $('#delete-modal').modal('show').find('.modal-content').load("{{url_for('delete')}}");
+      
+    }
+
+    </script>
+</html>

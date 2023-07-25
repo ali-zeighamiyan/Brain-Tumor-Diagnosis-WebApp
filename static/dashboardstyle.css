@@ -1,0 +1,103 @@
+*
+{
+margin: 0;
+padding: 0;
+
+}
+body
+{
+    font-family: sana-serif;
+    
+}
+#nav-bar
+{
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.navbar
+{
+    background-image: linear-gradient(to left, rgb(63, 63, 241), rgb(6, 164, 238));
+    padding: 5 !important;
+}
+
+.navbar-brand img
+{
+    height: 40px;
+    padding-left: 20px;
+}
+
+.navbar-nav
+{
+    padding: 0 10px;
+    font-size: 20px;
+    float: right;
+    text-align: right;
+}
+
+.navbar-nav a
+{
+    color: #fff !important;
+    font-weight: 600;
+     
+}
+/* #nav-bar .dropdown-menu a
+{
+    display: inline;
+
+} */
+.dropdown-menu
+{
+    width: 100px;
+}
+
+.parent .child{
+    display: inline;
+    color: rgb(90, 87, 93);
+    transition: 300ms;
+}
+.parent:hover .child{
+    color: rgb(55, 129, 220);
+    font-size: 18px;
+}
+.child{
+    margin-right: 10px;
+}
+
+
+
+.fa .fa-user-circle{
+    padding-right: 10px;
+}
+
+.fa-bars
+{
+    color: white;
+    font-size: 30px !important;
+
+
+}
+
+.navbar-toggler {
+    box-shadow: none !important;
+    border: none !important;;
+}
+
+.side-bar{
+    background: #74abe1;
+    padding-bottom: 10%;
+    padding-top: 5%;
+}
+
+.card-container {
+  display: flex;
+  justify-content: space-between;
+  width: 30%;
+}
+
+.user-icon{
+    display: flex;
+  justify-content: space-between;
+
+}
+
