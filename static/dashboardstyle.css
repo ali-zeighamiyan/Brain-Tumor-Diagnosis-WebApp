@@ -24,12 +24,12 @@ body
 .navbar-brand img
 {
     height: 40px;
-    padding-left: 20px;
+    /* padding-left: 20px; */
 }
 
 .navbar-nav
 {
-    padding: 0 10px;
+    padding: 0 5px;
     font-size: 20px;
     float: right;
     text-align: right;
@@ -41,11 +41,7 @@ body
     font-weight: 600;
      
 }
-/* #nav-bar .dropdown-menu a
-{
-    display: inline;
 
-} */
 .dropdown-menu
 {
     width: 100px;
@@ -87,10 +83,13 @@ body
     background: #74abe1;
     padding-bottom: 10%;
     padding-top: 5%;
+    height: 100vh;
+
+
 }
 
 .card-container {
-  display: flex;
+  /* display: flex; */
   justify-content: space-between;
   width: 30%;
 }
@@ -101,3 +100,43 @@ body
 
 }
 
+.vertical-acount-user{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#row{
+    display: flex; 
+    flex-wrap: wrap; 
+    height: 700px; 
+    overflow: auto; 
+    /* position: absolute; */
+}
+
+
+#patient-container{
+      margin: 10px auto;
+      position: relative;
+}
+
+/* #alert-row{
+    position: relative;
+} */
+
+#container-row{
+    position: absolute;
+    top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+}
+
+#add-patient-container{
+    position: absolute;
+    top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+}

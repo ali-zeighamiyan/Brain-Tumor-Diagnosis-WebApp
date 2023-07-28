@@ -13,14 +13,14 @@
         <!-- <img id="myImg" src="static/images/brain-tumor.jpg" alt="Snow"> -->
 
         <!-- The Modal -->
-        <div id="myModal" class="modal">
+        <div id="modal-image" class="modal">
     
         <!-- The Close Button -->
-        <span class="close">&times;</span>
+        <span class="close close-modal" id="close-image-modal">&times;</span>
         <button id="delete-img" class="delete-button"><i class="fa fa-trash"></i></button>
     
         <!-- Modal Content (The Image) -->
-        <img class="modal-content" id="img01" style="height: 85%; width: auto;">
+        <img class="modal-content" id="mri-image" style="height: 85%; width: auto;">
     
         <!-- Modal Caption (Image Text) -->
         <div id="caption"></div>
@@ -29,72 +29,28 @@
 
 
     <script>
-        function UrlExists(url){
-    var http = new XMLHttpRequest();
-    http.open('GET', url, false);
-    http.send();
-        
-    return http.status!=404;
-    
-};
-    
-
-    
-        // Get the modal
-    var modal = document.getElementById("myModal");
-    var i= localStorage.folder_id;
-    // Get the image and insert it inside the modal - use its "alt" text as a caption
-    // var img = document.getElementById(`image${i}`);
-    var modalImg = document.getElementById("img01");
-    // var captionText = document.getElementById("caption");
-   
-    mri_file = `static/doctors/${localStorage.username}/${i}/mri.png`;
-    // console.log(mri_file);
-    try{
-        if (UrlExists(mri_file)) {
-        modal.style.display = "block";
-        modalImg.src = mri_file;
-    }
-
-    else {
-        alert("You have not uploaded the photo yet");
-        modal.style.display = "none";
-        document.getElementById("modal_images_content").innerHTML = "";
-
-
-
-    }
-    } catch{
-        alert("You have not uploaded the photo yet");
-        modal.style.display = "none";
-        document.getElementById("modal_images_content").innerHTML = "";
-
-    }
-    
-    
-
-
+    modal_image = document.getElementById("modal-image");
+    mri_image = document.getElementById("mri-image");
        
-    // captionText.innerHTML = this.alt;
+    // var span = document.getElementById("close-image-modal");
+
+    var trash = document.getElementById("delete-img");
 
 
-    var span = document.getElementsByClassName("close")[0];
+    trash.addEventListener("click", function () {
+        // alert("t");
+        var modal_div = document.createElement("div");
+        modal_div.innerHTML = `<div class="modal fade" data-bs-backdrop="static" id="delete-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >` +
+                `<div class="modal-dialog">` +
+                    `<div class="modal-content">` +
+                    `</div>` +
+                `</div>` +
+                `</div>`;
 
-    var trash = document.getElementById("delete-img")
-    
-    // Get the <span> element that closes the modal
-    
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function() {
-        modal.style.display = "none";
-        document.getElementById("modal_images_content").innerHTML = "";
-        
-    };
-
-    trash.onclick = function () {
+      document.body.appendChild(modal_div);
         $('#delete-modal').modal('show').find('.modal-content').load("{{url_for('delete')}}");
       
-    }
+    });
 
     </script>
 </html>

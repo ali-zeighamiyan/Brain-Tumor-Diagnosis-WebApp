@@ -10,25 +10,27 @@
   <!-- Modal -->
         <div class="modal-header">
           <h5 class="modal-title" id="modal-header-delete"></h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close close-modal" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body" id="modal-body-delete">
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" id="cancel" class="btn btn-secondary close-modal" data-bs-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-primary" id="delete-button" onclick="confirm_delete()">Yes</button>
         </div>
     </body>
 
     <script>
 
+      close_modal("delete-modal");
 
       var storage = window.localStorage;
       var delete_modal = document.getElementById("delete-modal");
       // $('#delete-modal .modal-content').show();
       delete_modal.style.display = "block";
-      var image_modal = document.getElementById("myModal");
-      if (image_modal){
+      var modal_image = document.getElementById("modal-image");
+      if (modal_image){
+        // alert("in if");
         data = {"id": localStorage.clicked_number, "image": true};
         document.getElementById("modal-body-delete").innerHTML = "Are you sure to delete this photo?";
         document.getElementById("modal-header-delete").innerHTML = "Delete Photo";
@@ -50,17 +52,17 @@
           delete patients[`${localStorage.clicked_number}`];
           storage.setItem("patients", JSON.stringify(patients));
           $('.modal-backdrop').remove();
-          
           console.log();
-          if (image_modal){
-            image_modal.remove();
-            document.getElementById(`modal-diagnose${localStorage.clicked_number}`).innerHTML = "";
-            diagnose_button(localStorage.clicked_number);
-            
+          if (modal_image){
+            // modal_image.remove();
+            // $('.modal-backdrop').remove();
+            $("#modal_images_content").remove();
+            document.getElementById(`modal-diagnose${localStorage.clicked_number}`).innerHTML = "<b>Diagnose : <b>";
           }
           
           else{
-          // document.getElementById(`div${localStorage.clicked_number}`).innerHTML="";
+          // $('.modal-backdrop').remove();
+          close_modal("delete-modal", true);
           var element = document.getElementById(`div${localStorage.clicked_number}`); // Find the element
           element.parentNode.removeChild(element); // Remove the element
 

@@ -5,3 +5,7 @@
 .modal-dialog{
     width: 500px;
 }
+
+body.modal-open{
+    overflow-y: scroll;
+}

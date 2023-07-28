@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="static/dashboardstyle.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://kit.fontawesome.com/22a4e0612a.js" ></script>
+
+  <title>Account Details</title>
+  <style>
+    .container {
+      max-width: 500px;
+      margin: 50px auto;
+      position: relative;
+    }
+
+    .account-detail{
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+
+  </style>
+</head>
+<body>
+    <section id="nav-bar">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+              
+                <div class="nav-item dropdown">
+                    <button class="nav-link user-icon" type="button" data-bs-toggle="dropdown"><i class="fa fa-user" aria-hidden="true" style="color: white; font-size: larger;"></i></button>
+
+                <ul class="dropdown-menu">
+                    <li>   
+
+                      <div class="vertical-acount-user">
+                        <a class="dropdown-item parent" href="{{url_for('account')}}">
+
+                          <i class="fa fa-user-circle child"></i>
+                          <p class="child" style="font-weight: 600;">Account</p>
+                        </a>
+                        <span id="user-show" style="font-size: smaller; font-weight: 450;"></span>
+                      </div>
+                        
+                        
+                    </li>
+                    <li>
+                       
+                        <a class="dropdown-item parent" href= "{{url_for('dashboard')}}"> <i class="fa fa-tachometer child"></i><p class="child" style="font-weight: 600;"> Dashboard</p></a>
+                    </li>
+                    <li>
+                        
+                        <a class="dropdown-item parent" href="{{url_for('logout')}}"><i class="fa fa-sign-out child"></i> <p class="child" style="font-weight: 600;"> Logout</p></a>
+                    </li>
+                  </ul>
+
+                </div>
+
+            
+
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars" aria-hidden="true"></i>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav ms-auto">
+                  <a class="nav-link" href="#">About Us</a>
+                  <a class="nav-link" href="#">Services</a>
+                  <a class="nav-link" href="#">tumors</a>
+                  <a class="nav-link" href="{{url_for('home')}}">Home</a>
+                </div>
+              </div>
+            </div>
+          </nav>
+    </section>
+    
+
+    
+  
+  <div class="container">
+    <div class="row">
+      <div id="message-alert" class="alert alert-success text-center" role="alert" style="display: none; "></div>
+    </div>
+    <div class="row account-detail" style="margin-top: 70px;" >
+      <h2>Account Details</h2>
+    <form method="post" name="form" action="">
+        <div class="form-row">
+            <div class="col" style="margin-bottom: 10px;">
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name">
+            </div>
+            <div class="col" style="margin-bottom: 10px;" >
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter Your Email"  readonly="true" required>
+              </div>
+              
+              <div class="pass-change" id="pass-change" style="display: none; margin-bottom: 15px;">
+                
+                <div class="col" style="margin-bottom: 10px;">
+                    <!-- <label for="password">Current Password:</label> -->
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter Current Password" >
+                  </div>
+                  <div class="col" style="margin-bottom: 10px;">
+                    <!-- <label for="newpassword">New Password:</label> -->
+                    <input type="password" class="form-control" id="newpassword" name="newpassword" placeholder="Enter New Password" >
+                  </div>
+                  <div class="col" style="margin-bottom: 10px;">
+                    <!-- <label for="confirmpassword">Confirm Password:</label> -->
+                    <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" placeholder="Confirm New password">
+                  </div>
+              </div>
+              
+              <div class="col" style="margin-bottom: 10px;">
+                <label for="bio">Bio:</label>
+                <textarea class="form-control" id="bio" rows="3" name="bio" placeholder="Enter a short bio"></textarea>
+              </div>
+              <button type="submit" id="submit" class="btn btn-primary">Save</button>
+              <button type="button" id="change-pass-button" class="btn btn-primary">Want Modify Password Or Username</button>
+        </div>
+      
+    </form>
+    
+  </div>
+    </div>
+    
+
+</body>
+<script>
+    
+    var contents = JSON.parse('{{ contents|tojson }}');
+    username = contents["u"];
+    name = contents["n"];
+    bio = contents["b"];
+
+    document.getElementById("user-show").innerHTML = username;
+    
+    var alert_container = $("#message-alert");
+
+    if ("message" in contents){
+      message = contents["message"];
+      // alert_container.show();
+      if (message == "1"){
+        set_alert("Password changed Successfully", "g");
+      }
+      else if(message == "2"){
+        set_alert("Email Changed Successfully", "g");
+      }
+      else if(message == "-1"){
+        set_alert("Enter Your Current Password Carefully!", "r");
+      }
+      else if(message == "-2"){
+        set_alert("The Email Already Exists, Please Login Or Enter Another One", "r");
+      }
+      else if(message == "0"){
+        set_alert("User Information Updated", "g");
+      }
+    }
+
+    function set_alert(mess, color){
+      if (color=="r"){
+        var presentClassName = alert_container.attr('class');
+        alert_container.removeClass(presentClassName).addClass("alert alert-danger text-center ");
+
+      }
+      else{
+      var presentClassName = alert_container.attr('class');
+      alert_container.removeClass(presentClassName).addClass("alert alert-success text-center");
+      }
+      alert_container.text(mess);
+      alert_container.fadeIn();
+      
+      setTimeout(() => {
+        alert_container.fadeOut();
+      }, 4000);
+    }
+
+    
+
+
+
+    var password = document.getElementById("password");
+    var new_password = document.getElementById("newpassword");
+    var confirm_password = document.getElementById("confirmpassword");
+    var email = document.getElementById("email");
+    document.getElementById("name").value = name ;
+    document.getElementById("bio").value = bio ;
+    email.value = username;
+    
+
+
+    submit_button = document.getElementById("submit");
+    var change_pass_button = document.getElementById("change-pass-button");
+    var pass_change_form = $("#pass-change");
+    var i = 0;
+
+    change_pass_button.addEventListener("click", function() {
+        console.log();
+
+        if (i%2==0){
+            pass_change_form.fadeIn();
+            email.readOnly = false;
+            email.value = username;
+            change_pass_button.innerHTML = "Don't Want Modify";
+            password.required = "required";
+            new_password.required = "required";
+            confirm_password.required = "required";
+
+        }
+        else{
+            pass_change_form.fadeOut();
+            password.value = new_password.value = confirm_password.value = "";
+            email.value = username;
+            email.readOnly = true;
+            change_pass_button.innerHTML = "Want Modify Password Or Username";
+            password.required = null;
+            new_password.required = null;
+            confirm_password.required = null;
+
+        }
+        i+=1;
+        
+    });
+
+    submit_button.addEventListener("click", function(){
+        if (i%2 && new_password.value && confirm_password.value){
+
+            if (new_password.value == confirm_password.value ){
+                document.forms["form"].setAttribute("onsubmit", "return true");
+            }
+            else {
+                // alert("new_password and the Confirmation aren't the same");
+                set_alert("New Password And The Confirmation Aren't The Same!", "r");
+                document.forms["form"].setAttribute("onsubmit", "return false");
+            }
+
+        }
+        else{
+
+            document.forms["form"].setAttribute("onsubmit", "return true");
+        }
+
+    })
+
+    
+
+</script>
+</html>

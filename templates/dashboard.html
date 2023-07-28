@@ -12,24 +12,37 @@
     <body>
         <!-- NAVBAR SECTION-->
         <section id="nav-bar">
+          
             <nav class="navbar navbar-expand-lg bg-body-tertiary">
                 <div class="container-fluid">
                   
                     <div class="nav-item dropdown">
-                        <button class="nav-link user-icon" type="button" data-bs-toggle="dropdown"><i class="fa fa-user" aria-hidden="true" style="color: white; font-size: larger;"></i></button>
+                        <button class="nav-link user-icon" type="button" id="userDropdown" data-bs-toggle="dropdown"><i class="fa fa-user" aria-hidden="true" style="color: white; font-size: larger;"></i></button>
+                        <!-- <a href="" class="dropdown-toggle" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <i class="fa fa-user" aria-hidden="true" style="color: white; font-size: larger;"></i>
+                        </a> -->
+                    <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                        <li>   
 
-                    <ul class="dropdown-menu">
-                        <li>
+                          <div class="vertical-acount-user">
+                            <a class="dropdown-item parent" href="{{url_for('account')}}">
+
+                              <i class="fa fa-user-circle child"></i>
+                              <p class="child" style="font-weight: 600;">Account</p>
+                            </a>
+                            <span id="user-show" style="font-size: smaller; font-weight: 450;"></span>
+                          </div>
+                          <li><hr class="dropdown-divider"></li>
                             
-                            <a class="dropdown-item parent" href="#"><i class="fa fa-user-circle child"></i><p class="child"> Account</p></a>
+                            
                         </li>
                         <li>
                            
-                            <a class="dropdown-item parent" href= "{{url_for('dashboard')}}"> <i class="fa fa-tachometer child"></i><p class="child"> Dashboard</p></a>
+                            <a class="dropdown-item parent" href= "{{url_for('dashboard')}}"> <i class="fa fa-tachometer child"></i><p class="child" style="font-weight: 600;"> Dashboard</p></a>
                         </li>
                         <li>
                             
-                            <a class="dropdown-item parent" href="{{url_for('logout')}}"><i class="fa fa-sign-out child"></i> <p class="child"> Logout</p></a>
+                            <a class="dropdown-item parent" href="{{url_for('logout')}}"><i class="fa fa-sign-out child"></i> <p class="child" style="font-weight: 600;"> Logout</p></a>
                         </li>
                       </ul>
 
@@ -50,42 +63,25 @@
                   </div>
                 </div>
               </nav>
+              
         </section>
 
         <!-- PATIENT SECTION -->
 
-        <!-- <p  class="text-center" id="message" style="color: rgb(2, 155, 25);">{{message}}</p> -->
+        <section>
 
-        <section id="patiant-details">
           
-          <div class="modal fade" id="PatientModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
-            <div class="modal-dialog modal-lg" >
-            <div class="modal-content" >
 
-            </div>
-          </div>
-        </div>
+            <div class="container-fluid" id="patient-container">
+              
+              <div class="row" id="container-row">
+                <div class="col-md-9" style="position: relative;">
 
-        <div id="modal_images_content"></div>
+                  <div class="row" id="row"></div>
 
-        <div class="modal fade" id="delete-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-            </div>
-          </div>
-        </div>
-
-       
-
-            <div class="container-fluid" id="full">
-              <div class="row">
-                <div class="col-md-9 mt-3">
-
-                  <div class="row" id="row" style="display: flex; flex-wrap: wrap; height: 700px; overflow: auto;" ></div>
                   </div>
 
-
-                  <div class="col-md-3 text-center side-bar ">
+                <div class="col-md-3 text-center side-bar ">
 
                       <!-- Add patient And Main Dashboard -->
                       <div class="col-md-6 mb-3" style="justify-content: flex-start; display: flex; width: 100%;">
@@ -95,9 +91,7 @@
                       <div class="col-md-6 mb-5" style="justify-content: flex-start; display: flex; width: 100%;">
                         <button class="btn btn-primary add-patient" style="width: 100% ;" ><b> Add Patient</b></button>
                       </div>
-                      
-                      
-                
+           
                     <!-- ####### -->
 
                     <div class="row mt-3">
@@ -130,13 +124,22 @@
 
 
                     </div>
+
+                    
                     
 
                   </div>
                 </div>
+                
+                <div class="row" id="add-patient-container"></div>
+                
+                <div class="row" id="alert-row"></div>
+                
+                
               </div>
 
         </section>
+        
         
     </body>
 
@@ -144,7 +147,7 @@
 
     <script>
 
-
+    console.log()
       try
       {var contents = JSON.parse('{{ contents|tojson }}');
     }
@@ -159,10 +162,12 @@
       console.log(contents["user"]);
       patients = contents["patients"];
       localStorage.setItem("patients", JSON.stringify(patients));
+
+      document.getElementById("user-show").innerHTML = localStorage.username;
     
 
     function card_holder(i){
-      var html =        `<div class="col-md-4 mt-5 mr-3 ml-3 card-container" id="div${i}">` + 
+      var html =        `<div class="col-md-4 mr-3 ml-3 card-container" id="div${i}">` + 
                           `<div class="card">` +
 
                             `<img class="card-img-top" src="static/images/brain-tumor.jpg" alt="Card image cap" onclick="display_images(this.id)" id="image${i}">` +
@@ -172,9 +177,8 @@
                                 `<p class="card-text" id="modal-date${i}"><b>Service date : </b></p>` + 
                                 `<p class="card-text" id="modal-diagnose${i}"><b>Diagnose : <b></p>` + 
                                 `<div class="button-group">` +
-                                `<button type="button"  class="btn btn-primary Edit-button" id="edit${i}" onClick="edit_button(this.id)">Edit</button>` +
+                                `<button type="button"  class="btn btn-primary Edit-button" id="edit${i}" onClick="edit_button(this.id)">View & Edit</button>` +
                                 `<button type="button"  class="btn btn-primary delete-button" id="delete${i}"  onClick="delete_button(this.id)">Delete</button>` +
-                                `<button type="button"  class="btn btn-primary diagnose-button" id="diagnose${i}"  onClick="diagnose_button(this.id)">Diagnose</button>` +
                               `</div>`+ 
                               `</div>`+ 
                           `</div>` +
@@ -211,7 +215,7 @@
       if (diagnose != "" ){
         document.getElementById(`modal-diagnose${id}`).innerHTML += diagnose;
       }
-      diagnose_button(id);
+      // diagnose_button(id);
       
     };
 
@@ -223,10 +227,26 @@
       var current_ids = Object.keys(patients);
       localStorage.setItem("current_ids", JSON.stringify(current_ids));
       localStorage.isadd = 1;
-      $('#PatientModal').modal('show').find('.modal-content').load("{{url_for('edit')}}");
+
+      // var modal_div = document.createElement("div");
+      modal_div = document.getElementById("add-patient-container");
+      modal_div.innerHTML = `<div class="modal fade" data-bs-backdrop="static" id="PatientModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">` +
+              `<div class="modal-dialog modal-lg" >` +
+              `<div class="modal-content" >` +
+            `</div>` +
+          `</div>`+
+        `</div>` ;
+
+      // document.body.appendChild(modal_div);
+      // $("#add-patient-container").html(modal_div); 
+      $("#PatientModal").modal("show").find('.modal-content').load("{{url_for('edit')}}");
+      
+
 
     });
     // Add Patient Section End
+
+    
 
     function edit_button(clicked_id){
       var clicked_number = clicked_id.match(/-?\d+\.?\d*/);
@@ -240,6 +260,16 @@
       localStorage.date = patient.d;
       localStorage.note = patient.n;
       localStorage.isadd = 0;
+
+      var modal_div = document.createElement("div");
+      modal_div.innerHTML = `<div class="modal fade" data-bs-backdrop="static" id="PatientModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">` +
+              `<div class="modal-dialog modal-lg" >` +
+              `<div class="modal-content" >` +
+            `</div>` +
+          `</div>`+
+        `</div>` ;
+
+      document.body.appendChild(modal_div);
       
       $('#PatientModal').modal('show').find('.modal-content').load("{{url_for('edit')}}");
     }
@@ -248,6 +278,16 @@
       var clicked_number = clicked_id.match(/-?\d+\.?\d*/);
       localStorage.equivilant = eq[clicked_number];
       localStorage.clicked_number = document.getElementById(`modal-id${clicked_number}`).innerHTML.match(/-?\d+\.?\d*/);
+      var modal_div = document.createElement("div");
+      modal_div.innerHTML = `<div class="modal fade" data-bs-backdrop="static" id="delete-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">` +
+              `<div class="modal-dialog">` +
+                `<div class="modal-content">` +
+                `</div>` +
+              `</div>` +
+            `</div>`;
+
+
+      document.body.appendChild(modal_div);
       $('#delete-modal').modal('show').find('.modal-content').load("{{url_for('delete')}}");
 
     };
@@ -305,7 +345,8 @@ document.getElementById('diagnose-input').addEventListener('change', function() 
 
 function show_fast_diagnose_res(){
   if (fast_diagnose_res.length == 0){
-  alert("Please Upload MRI Image");
+  // alert("Please Upload MRI Image");
+  set_alert("Please Upload MRI Image", "r");
   return;
 }
   document.getElementById("diagnose-result").innerHTML = fast_diagnose_res;
@@ -316,20 +357,114 @@ function show_fast_diagnose_res(){
   // Display MRI Image Start
   function display_images(clicked_id){
     var clicked_number = clicked_id.match(/-?\d+\.?\d*/);
-    patients = JSON.parse(localStorage.getItem("patients"));
-    localStorage.folder_id  = patients[clicked_number].folder_id;
     localStorage.clicked_number = clicked_number;
+    const imageId = clicked_number; // Replace with the actual image ID
+    var url;
+
+    var modal_div = document.createElement('div');
+    modal_div.id = "modal_images_content";
+    document.body.appendChild(modal_div);
+
+    $.ajax({
+      url:"/modal_image",
+      success: function(response){
+        $('#modal_images_content').html(response);
+      }
+    });
 
 
-
-    $('#modal_images_content').load("{{url_for('mri_images')}}");
+    // $('#modal_images_content').load("{{url_for('modal_image')}}");
+  
+    fetch(`/get_image/${imageId}`)
+  .then(response => {
+    if (response.ok) {
+      return response.blob();
+    } else {
+      throw new Error("Image retrieval failed");
+    }
+  })
+  .then(blob => {
+    if (blob.size > 0){
+      url = URL.createObjectURL(blob);
+      console.log(url);
+      modal_image.style.display = "block";
+      mri_image.src = url;
+      close_modal(modal_div.id);
+    }
+    else{
+      // alert("You have not uploaded the photo yet");
+      set_alert("You have not uploaded the photo yet", "r");
+      modal_image.style.display = "none";
+      close_modal(modal_div.id, true);
+    }
+      
+  })
+  .catch(error => {
+    // alert("You have not uploaded the photo yet");
+    set_alert("You have not uploaded the photo yet", "r");
+    modal_image.style.display = "none";
+    close_modal(modal_div.id, true);
+  });
 
 
     }
+   
   // Display MRI Image End
 
-    
+
+    // Close Modal 
+
+    function close_modal(modal_container_id, not_listen=false){
       
+    if (not_listen){
+      $(`#${modal_container_id}`).remove();
+        $("#userDropdown").on("click", function(){
+          $(this).dropdown("toggle");
+        });
+    }
+    else{
+      var close_modal_btn = $(".close-modal");
+      close_modal_btn.click(function() {
+        $(`#${modal_container_id}`).remove();
+        $("#userDropdown").on("click", function(){
+          $(this).dropdown("toggle");
+        });
+        
+    });
+    }
+        
+        
+    };
+
+    function set_alert(mess, color){
+      // alert("alert");
+      var alert_html = `
+                  <div id="message-alert" class="alert alert-success alert-dismissible text-center .fade .show mt-" role="alert" style="display: none;">
+                    <button type="button" class="btn-close" data-bs-dismiss="#message-alert" aria-label="Close"></button>
+                  </div>`;
+      var alert_div = document.getElementById("alert-row");
+      alert_div.innerHTML = alert_html;
+
+      var alert_container = $("#message-alert");
+      if (color=="r"){
+        var presentClassName = alert_container.attr('class');
+        alert_container.removeClass(presentClassName).addClass("alert alert-danger text-center ");
+
+      }
+      else{
+      var presentClassName = alert_container.attr('class');
+      alert_container.removeClass(presentClassName).addClass("alert alert-success text-center");
+      }
+      alert_container.text(mess);
+      alert_container.fadeIn();
+      
+      setTimeout(() => {
+        alert_container.fadeOut();
+      }, 4000);
+    }
+  
+      
+
 
 </script>
 <html>

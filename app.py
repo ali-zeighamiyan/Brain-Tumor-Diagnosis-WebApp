@@ -1,8 +1,12 @@
 from flask_cors import CORS
-from flask import Flask, request, jsonify, render_template, redirect, url_for, session
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session, send_file, make_response
 from datetime import timedelta
-from functions import save_user, check_login, save_dashboard, get_patient, delete_patient, mri_diagnose, delete_file
-import json
+
+from app_functions import add_user, check_login, save_patient, delete_patient, fast_diagnose, delete_patient, get_patient, get_patient_image, get_user_inf, modify_user_inf
+
+import json, base64
+
+
 app = Flask(__name__)
 CORS(app)
 app.secret_key = "Hellow"
@@ -56,7 +60,7 @@ def signup():
 
         data = {"username":username, "pass":password, "cpass":confirm_password}
         
-        mess_type, message = save_user(data)
+        mess_type, message = add_user(data)
         # return flask.Response(message, status=201)
         if mess_type == 1 or mess_type == 2:
             return render_template('signup.html', message=message)
@@ -104,7 +108,7 @@ def dashboard():
                 #     mri_image = request.files["mri-img"]
                 #     datas = {"u":username, "m":mri_image, "i":0}
 
-                save_res = save_dashboard(datas)
+                save_res = save_patient(datas)
 
 
                 datas = get_patient(username)
@@ -120,11 +124,17 @@ def edit():
         return render_template("edit.html")
    
 
-@app.route('/mri_images', methods=["POST", "GET"])
-def mri_images():
+@app.route('/get_image/<image_id>', methods=["POST", "GET"])
+def get_image(image_id):
+   if request.method == "GET":
+        image_io = get_patient_image(session["username"], image_id)
+        response = make_response(send_file(image_io, mimetype='image/jpeg'))
+        return response
+
+@app.route('/modal_image', methods=["GET"])
+def modal_image():
    if request.method == "GET":
         return render_template("modal_image.html")
-
 
 
 @app.route('/logout', methods=["POST", "GET"])
@@ -141,7 +151,7 @@ def delete():
         image = request.args.getlist("image")
         if id:
             if image:
-                result = delete_file(user, id[0]) 
+                result = delete_patient(user, id[0], just_delete_image=True) 
 
             else:
                 result = delete_patient(user, id[0])
@@ -153,25 +163,67 @@ def delete():
     
 @app.route('/diagnose', methods=["POST", "GET"])
 def diagnose():
-    if "username" in session: 
-        user = session["username"]
-        if request.method == "GET" : 
-            id = request.args.getlist('id[]')[0]
-            result = mri_diagnose(user, id)
-        
-        if request.method == "POST" :
-            mri_image = request.files["mri-img"]
-            datas = {"u":user, "m":mri_image, "i":0}
-            save_result = save_dashboard(datas)
-            result = mri_diagnose(user)
-        
+    if request.method == "POST" :
+        mri_image = request.files["mri-img"]
+        datas = {"m":mri_image}
+        result = fast_diagnose(datas)
+    
 
-        return jsonify(result = result)
-    else:
-        return redirect(url_for("login"))
+    return jsonify(result = result)
+
+
+@app.route('/account', methods=["POST", "GET"])
+def account():
+    username = session["username"]
+
+    if request.method == "GET":
+        contents = get_user_inf(username)
+        if "mess_type" in session:
+            message = session["mess_type"]
+            session.pop("mess_type")
+            contents.update({"message":str(message)})
+            return render_template("account.html", contents=contents)
+        else:
+            return render_template("account.html", contents=contents)
+
+
+    if request.method == "POST":
+        name = request.form["name"]
+        new_email = request.form["email"]
+        bio = request.form["bio"]
+        password = request.form["password"]
+        new_password = request.form["newpassword"]
+        confirm_password = request.form["confirmpassword"]
+        datas = {"u":username, "n":name, "b":bio, "p":password, "np":new_password, "cp":confirm_password, "ne":new_email }
+        mes_type = modify_user_inf(datas)
+        if mes_type == 2:
+            session["username"] = new_email
+        
+        session["mess_type"] = mes_type
+        
+        return redirect(url_for("account"))
+
+    
+@app.route('/forgotpass', methods=["POST", "GET"])
+def forgotpass():
+    if request.method == "GET":
+        return render_template("forgot_pass.html")
+    
+    if request.method == "POST":
+        email = request.form["email"]
+        token = request.form["token"]
+        new_password = request.form["newpassword"]
+        confirm_password = request.form["confirmspassword"]
+        if email:
+            pass
+
+        elif token:
+            pass
+
+
 
 
 
 if __name__ == "__main__":
-    app.run("0.0.0.0", 6969, debug=False)
+    app.run("0.0.0.0", 6969, debug=True)
 

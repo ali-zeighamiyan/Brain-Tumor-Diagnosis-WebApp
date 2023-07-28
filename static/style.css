@@ -260,3 +260,12 @@ body
 {
     width: 50px;
 }
+
+.vertical-acount-user{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  

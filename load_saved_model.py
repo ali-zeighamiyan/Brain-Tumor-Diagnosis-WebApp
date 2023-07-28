@@ -23,9 +23,7 @@ class load_model:
         return tumors[prediction_value]
     
     def predict2(self, image):
-        # image = tf.image.decode_png(image, channels=3)
         image = tf.image.resize(image, IMAGE_SHAPE)
-        # image = image/255
         image = np.array([image])
 
         prediction_value = np.argmax(self.save_model.predict(image))

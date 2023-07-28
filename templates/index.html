@@ -20,8 +20,15 @@
                     <button class="nav-link" type="button" data-bs-toggle="dropdown" id="user"><i class="fa fa-user" aria-hidden="true" style="color: white; font-size: larger;"></i></button>
                     <ul class="dropdown-menu">
                         <li>
+                            <div class="vertical-acount-user">
+                                <a class="dropdown-item parent" href="{{url_for('account')}}">
+    
+                                  <i class="fa fa-user-circle child"></i>
+                                  <p class="child" style="font-weight: 600;">Account</p>
+                                </a>
+                                <span id="user-show" style="font-size: smaller; font-weight: 450;"></span>
+                              </div>
                             
-                            <a class="dropdown-item parent" href="#"><i class="fa fa-user-circle child"></i><p class="child"> Account</p></a>
                         </li>
                         <li>
                            
@@ -161,10 +168,11 @@
     <script>
         var state = '{{ message }}';
         if (state == "login"){
-            document.getElementById('login').hidden = true
+            document.getElementById('login').hidden = true;
+            document.getElementById("user-show").innerHTML = localStorage.username;
         }
         else{
-            document.getElementById('user').hidden = true
+            document.getElementById('user').hidden = true;
             
         }
     </script>
