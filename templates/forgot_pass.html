@@ -12,7 +12,7 @@
   <style>
     .container {
       max-width: 500px;
-      margin: 50px auto;
+      margin: 30px auto;
       position: relative;
     }
 
@@ -29,69 +29,74 @@
 <body>
     <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" id="modal-btn-toggle">Open modal for @mdo</button> -->
 
-  <div class="container">
-    <div class="row">
-      <div id="message-alert" class="alert alert-success text-center" role="alert" style="display: none; "></div>
-    </div>
+        
 
 
-        <div class="row forgot-password" style="margin-top: 70px;" >
-            
             
 
             <div class="modal fade" data-bs-backdrop="static" id="forgot-pass-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                <div class="modal-content" >
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modal-title">Forgot Password</h5>
-                        <button type="button" class="btn-close close-modal" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-            
-                    <div class="modal-body">
-                        <form method="post" name="form" id="form" action="">
-                            <div class="form-row">
-                                
-                                <div class="col" style="margin-bottom: 10px;" >
-                                    <!-- <label for="email">Email:</label> -->
-                                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter Your Email" required>
-                                </div>
-                                
-                                <div class="pass-change" id="pass-change" style="display: none; margin-bottom: 15px;">
-                                    
-                                    <div class="col" style="margin-bottom: 10px;">
-                                        <!-- <label for="token">Current Password:</label> -->
-                                        <input type="password" class="form-control" id="token" name="token" placeholder="Enter Token Sended To Your Email" >
+                
+                
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            
+        
+                                <div class="modal-header ">
+                                    <h5 class="modal-title mb-1" id="modal-title">Forgot Password</h5>
+                                    <button type="button" class="btn-close close-modal mb-1" data-bs-dismiss="modal" aria-label="Close"></button>
+        
+                            </div>
+        
+                            <div class="modal-body">
+                                <!-- <div class="row"> -->
+                                    <div id="message-alert" class="alert alert-success text-center" role="alert" style="display: none; "> </div>
+                                <!-- </div> -->
+                                <form name="form" id="form" onsubmit="return false">
+                                    <div class="form-row">
+                                        
+                                        <div class="col" style="margin-bottom: 10px;" >
+                                            <!-- <label for="email">Email:</label> -->
+                                            <input type="email" class="form-control" id="email" name="email"  placeholder="Enter Your Email">
+                                        </div>
+                                        
+                                        <div class="pass-change" id="pass-change" style="display: none; margin-bottom: 15px;">
+                                            
+                                            <div class="col" style="margin-bottom: 10px;">
+                                                <!-- <label for="token">Current Password:</label> -->
+                                                <input type="password" class="form-control" id="token" name="token" placeholder="Enter Token Sended To Your Email" >
+                                            </div>
+                                            <div class="col" style="margin-bottom: 10px;">
+                                                <!-- <label for="newpassword">New Password:</label> -->
+                                                <input type="password" class="form-control" id="newpassword" name="newpassword" placeholder="Enter New Password" >
+                                            </div>
+                                            <div class="col" style="margin-bottom: 10px;">
+                                                <!-- <label for="confirmpassword">Confirm Password:</label> -->
+                                                <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" placeholder="Confirm New password" >
+                                            </div>
+                                        </div>
+                                        
+                                        
                                     </div>
-                                    <div class="col" style="margin-bottom: 10px;">
-                                        <!-- <label for="newpassword">New Password:</label> -->
-                                        <input type="password" class="form-control" id="newpassword" name="newpassword" placeholder="Enter New Password" >
-                                    </div>
-                                    <div class="col" style="margin-bottom: 10px;">
-                                        <!-- <label for="confirmpassword">Confirm Password:</label> -->
-                                        <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" placeholder="Confirm New password">
-                                    </div>
-                                </div>
-                                
+                                </form>
+                            </div>
+                    
+                            <div class="modal-footer">
+                                <button type="button" id="close_modal" class="btn btn-secondary close-modal" data-bs-dismiss="modal">Close</button>
+                                <button  id="submit1" form="form" class="btn btn-primary">Send Token</button>
+                                <button  id="submit2" form="form"  class="btn btn-primary" style="display: none;">Save Change</button>
                                 
                             </div>
-                        </form>
-                    </div>
-            
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" id="submit" form="form" class="btn btn-primary">Send Token</button>
                         
+                        </div>
                     </div>
                 
-                </div>
-            </div>
+                
         </div>
                 
-        
-  </div>
     
     
-  </div>
+    
+
 </body>
 
 <script>
@@ -104,51 +109,109 @@
     var email = $("#email");
 
 
-    submit_button = document.getElementById("submit");
+    submit_button1 = $("#submit1");
+    submit_button2 = $("#submit2");
+
     var pass_change_form = $("#pass-change");
     var i = 0;
 
 
-    submit_button.addEventListener("click", function(){
+    submit_button1.click(function(){
 
         if (validateEmail(email.val())){
-            document.forms["form"].setAttribute("onsubmit", "return true");
-            email.hide();
-            i += 1;
-
+            send_form("forgotpass",function(res){
+            if (res=="1"){
+                email.hide();
+                submit_button1.hide();
+                pass_change_form.fadeIn();
+                submit_button2.fadeIn();
+                // email.val("");
+                send_form("sendmail", function(result){});
+                set_alert("Token Has Been Sent To Your Email", "g")
+                
+            }
+            else if (res == "2"){
+                // alert("The Token Had Been Sent To Your Email, Try Again 1 Minutes Later");
+                set_alert("The Token Had Been Sent To Your Email, Try Again 1 Minutes Later", "r");
+            }
+            else{
+                // alert("Email Doesn't Exist!");
+                set_alert("Email Doesn't Exist!", "r");
+            }
+            })
+           
+            
         }
         else{
-            alert("Enter A Valid Email!");
-            document.forms["form"].setAttribute("onsubmit", "return false");
+            // alert("Enter A Valid Email!");
+            var formElement = document.querySelector('#form');
+            formElement.reportValidity();
         }
+    })
 
 
-        if (i%2==1){
-            pass_change_form.fadeIn();
-            token.required = "required";
-            new_password.required = "required";
-            confirm_password.required = "required";
-            if (new_password.value == confirm_password.value ){
-            document.forms["form"].setAttribute("onsubmit", "return true");
-        }
+
+    submit_button2.click(function(){
+        email.prop("required", false);
+        token.required = "required";
+        new_password.required = "required";
+        confirm_password.required = "required";
+        var formElement = document.querySelector('#form');
+        not_empty = formElement.reportValidity();
+        if (not_empty){
+            if (isPasswordStrong(new_password.value)){
+            if (new_password.value === confirm_password.value){
+            send_form("resetpass", function(res){
+                if (res == "1"){
+                // alert("Password Changed Succesfully");
+                set_alert("Password Changed Succesfully", "g", $("#message-alert-login"));
+                bootstrapModal.hide();
+        
+                    
+                
+                
+                }
+                else if (res =="-1") {
+                    // alert("Token Has Expired! Please Try Again");
+                    set_alert("Token Has Expired! Please Try Again", "r", $("#message-alert-login"));
+                    bootstrapModal.hide();
+
+                }
+                else{
+                    // alert("Please Enter The Token Sended To Your Email Correctly!");
+                    set_alert("Please Enter The Token Sended To Your Email Correctly!", "r")
+                }
+            })
+            
+    }
         else {
-            // alert("new_password and the Confirmation aren't the same");
+            // alert("New Password And The Confirmation Aren't The Same!");
             set_alert("New Password And The Confirmation Aren't The Same!", "r");
-            document.forms["form"].setAttribute("onsubmit", "return false");
+            // document.forms["form"].setAttribute("onsubmit", "return false");
+        }
         }
 
-        }
         else{
-            pass_change_form.fadeOut();
-            password.value = new_password.value = confirm_password.value = "";
-            password.required = null;
-            new_password.required = null;
-            confirm_password.required = null;
-
+            // alert("The Password Must Have At Least 8 Characters With UpperCase, LowerCase, Digit, And Special Characters");
+            set_alert("The Password Must Have At Least 4 Characters With UpperCase, LowerCase, Digit, And Special Characters", "r");
+        }
         }
         
- 
+        else{
+            not_empty;
+        }
+        
 
+    }
+    )
+
+    var close_modal_btn = document.getElementById("close_modal");
+	$(".close-modal").click(function(){
+        pass_change_form.hide();
+        submit_button2.hide();
+        submit_button1.show();
+        email.fadeIn();
+        $('.modal-backdrop').remove();
     })
 
     
@@ -159,11 +222,76 @@
     return regex.test(email);
     }
 
+    var bootstrapModal = new bootstrap.Modal(myModal);
     myModalBtn.addEventListener('click', function() {
-			var bootstrapModal = new bootstrap.Modal(myModal);
+            email.prop("required", true);
 			bootstrapModal.toggle();
+            email.val("");
+            token.value = token.required = new_password.value = new_password.required = confirm_password.value =  confirm_password.required = null;
+            
         
 			});
+
+    
+
+
+    
+    function send_form(endpoint, callback){
+        var form_data = new FormData();
+        
+        form_data.append("email", email.val());
+        form_data.append("token", token.value);
+        form_data.append("newpassword", new_password.value);
+        form_data.append("confirmpassword", confirm_password.value)
+        $.ajax({
+            url: `/${endpoint}`, 
+            data: form_data,
+            type: "POST",
+            contentType: false,
+            cache: false,
+            processData: false,
+            
+            }).done(function(response) {
+            res = response.result;
+            callback(res);
+            
+        });
+        
+    }
+
+    function isPasswordStrong(password) {
+  // Check length (at least 8 characters)
+  if (password.length < 4) {
+    return false;
+  }
+  
+  return true;
+    }
+    
+    function set_alert(mess, color, alert_container=null){
+        if (!alert_container){
+            alert_container = $("#message-alert");
+        }
+        if (color=="r"){
+            var presentClassName = alert_container.attr('class');
+            alert_container.removeClass(presentClassName).addClass("alert alert-danger text-center ");
+
+        }
+        else{
+        var presentClassName = alert_container.attr('class');
+        alert_container.removeClass(presentClassName).addClass("alert alert-success text-center");
+        }
+        alert_container.text(mess);
+        alert_container.fadeIn();
+        
+        setTimeout(() => {
+            alert_container.fadeOut();
+        }, 4000);
+        }
+
+
+            
+
 
 
 

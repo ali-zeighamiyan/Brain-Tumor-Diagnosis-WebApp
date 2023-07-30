@@ -68,10 +68,10 @@
               </button>
               <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav ms-auto">
-                  <a class="nav-link" href="#">About Us</a>
-                  <a class="nav-link" href="#">Services</a>
-                  <a class="nav-link" href="#">tumors</a>
-                  <a class="nav-link" href="{{url_for('home')}}">Home</a>
+                  <a class="nav-link" href="{{url_for('home')}}#footer">Contact</a>
+                  <a class="nav-link" href="{{url_for('home')}}#about-us">About</a>
+                  <a class="nav-link" href="{{url_for('home')}}#services">Services</a>
+                  <a class="nav-link" href="{{url_for('home')}}#banner">Home</a>
                 </div>
               </div>
             </div>
@@ -87,7 +87,7 @@
     </div>
     <div class="row account-detail" style="margin-top: 70px;" >
       <h2>Account Details</h2>
-    <form method="post" name="form" action="">
+    <form method="post" id="form" name="form" onsubmit="return false">
         <div class="form-row">
             <div class="col" style="margin-bottom: 10px;">
                 <label for="name">Name:</label>
@@ -118,8 +118,8 @@
                 <label for="bio">Bio:</label>
                 <textarea class="form-control" id="bio" rows="3" name="bio" placeholder="Enter a short bio"></textarea>
               </div>
-              <button type="submit" id="submit" class="btn btn-primary">Save</button>
-              <button type="button" id="change-pass-button" class="btn btn-primary">Want Modify Password Or Username</button>
+              <button id="submit" class="btn btn-primary">Save</button>
+              <button type="button" id="change-pass-button" class="btn btn-primary">Modify Password Or Username?</button>
         </div>
       
     </form>
@@ -138,7 +138,7 @@
 
     document.getElementById("user-show").innerHTML = username;
     
-    var alert_container = $("#message-alert");
+    
 
     if ("message" in contents){
       message = contents["message"];
@@ -160,7 +160,9 @@
       }
     }
 
+
     function set_alert(mess, color){
+      var alert_container = $("#message-alert");
       if (color=="r"){
         var presentClassName = alert_container.attr('class');
         alert_container.removeClass(presentClassName).addClass("alert alert-danger text-center ");
@@ -186,7 +188,10 @@
     var new_password = document.getElementById("newpassword");
     var confirm_password = document.getElementById("confirmpassword");
     var email = document.getElementById("email");
-    document.getElementById("name").value = name ;
+    if (name != "null"){
+      document.getElementById("name").value = name ;
+    }
+    
     document.getElementById("bio").value = bio ;
     email.value = username;
     
@@ -204,7 +209,7 @@
             pass_change_form.fadeIn();
             email.readOnly = false;
             email.value = username;
-            change_pass_button.innerHTML = "Don't Want Modify";
+            change_pass_button.innerHTML = "Don't Modify";
             password.required = "required";
             new_password.required = "required";
             confirm_password.required = "required";
@@ -215,7 +220,7 @@
             password.value = new_password.value = confirm_password.value = "";
             email.value = username;
             email.readOnly = true;
-            change_pass_button.innerHTML = "Want Modify Password Or Username";
+            change_pass_button.innerHTML = "Modify Password Or Username?";
             password.required = null;
             new_password.required = null;
             confirm_password.required = null;
@@ -226,8 +231,9 @@
     });
 
     submit_button.addEventListener("click", function(){
-        if (i%2 && new_password.value && confirm_password.value){
-
+        if (i%2){
+          if (isPasswordStrong(new_password.value)){
+            // alert("strong");
             if (new_password.value == confirm_password.value ){
                 document.forms["form"].setAttribute("onsubmit", "return true");
             }
@@ -237,6 +243,13 @@
                 document.forms["form"].setAttribute("onsubmit", "return false");
             }
 
+          }
+          else{
+            document.forms["form"].setAttribute("onsubmit", "return false");
+            set_alert("The Password Must Have At Least 4 Characters With UpperCase, LowerCase, Digit, And Special Characters", "r");
+          }
+
+            
         }
         else{
 
@@ -244,6 +257,17 @@
         }
 
     })
+
+    
+    function isPasswordStrong(password) {
+  // Check length (at least 8 characters)
+  if (password.length < 4) {
+    return false;
+  }
+  
+  return true;
+}
+
 
     
 

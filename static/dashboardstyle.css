@@ -11,6 +11,7 @@ body
 }
 #nav-bar
 {
+    font-size: 20px;
     position: sticky;
     top: 0;
     z-index: 10;
@@ -30,7 +31,7 @@ body
 .navbar-nav
 {
     padding: 0 5px;
-    font-size: 20px;
+    /* font-size: 20px; */
     float: right;
     text-align: right;
 }

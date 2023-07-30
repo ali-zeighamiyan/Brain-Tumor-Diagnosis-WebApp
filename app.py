@@ -1,10 +1,10 @@
 from flask_cors import CORS
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session, send_file, make_response
-from datetime import timedelta
+from datetime import datetime, timedelta
+from app_functions import add_user, check_login, save_patient, delete_patient, fast_diagnose,\
+                 delete_patient, get_patient, get_patient_image, get_user_inf, modify_user_inf, update_password, SendMail
 
-from app_functions import add_user, check_login, save_patient, delete_patient, fast_diagnose, delete_patient, get_patient, get_patient_image, get_user_inf, modify_user_inf
-
-import json, base64
+import secrets
 
 
 app = Flask(__name__)
@@ -12,6 +12,8 @@ CORS(app)
 app.secret_key = "Hellow"
 app.permanent_session_lifetime = timedelta(days=1)
 
+RESET_TOKEN = {}
+mail = SendMail()
 
 @app.route("/")
 def home():
@@ -210,20 +212,65 @@ def forgotpass():
         return render_template("forgot_pass.html")
     
     if request.method == "POST":
-        email = request.form["email"]
-        token = request.form["token"]
-        new_password = request.form["newpassword"]
-        confirm_password = request.form["confirmspassword"]
-        if email:
-            pass
+        user_input_email = request.form["email"]
 
-        elif token:
-            pass
+        #  Preventing Numerous Requests
+        if user_input_email in RESET_TOKEN:
+            token_expire_date = RESET_TOKEN[user_input_email][1]
+            
+            ## Check if Token Expired Then Delete It
+            if token_expire_date - datetime.now() < timedelta(minutes=4) :
+                RESET_TOKEN.pop(user_input_email)
+    
+            ## Send Message That Token Already Sended
+            else:
+                return jsonify(result = 2)
+        
+            
+        if user_input_email:
+                user_exist = mail.ckeck_user_exist(user_input_email)
+                return jsonify(result = user_exist)
 
+
+@app.route('/sendmail', methods=["POST", "GET"])
+def sendmail():
+    if request.method == "POST":
+        user_input_email = request.form["email"]
+        reset_token = secrets.token_hex(4)
+        expire_date = datetime.now() + timedelta(minutes=5)
+        send_email_res = mail.send_email(user_input_email, reset_token)
+        RESET_TOKEN.update({user_input_email:[reset_token, expire_date]})
+    
+        return jsonify(result = send_email_res)
+
+        
+@app.route('/resetpass', methods=["POST"])
+def resetpass():
+    user_input_token = request.form["token"]
+    new_password = request.form["newpassword"]
+    user_input_email = list(RESET_TOKEN.keys())[0]
+
+    if user_input_token and user_input_email in RESET_TOKEN :
+
+        reset_token = RESET_TOKEN[user_input_email][0]
+        token_expire_date = RESET_TOKEN[user_input_email][1]
+
+        if token_expire_date > datetime.now() :
+            if reset_token == user_input_token :
+                update_password(new_password, user_input_email)
+                RESET_TOKEN.pop(user_input_email)
+                
+                return jsonify(result = 1)
+            ### Token Has Expired
+            else:
+                return jsonify(result = 0)
+        else:
+            RESET_TOKEN.pop(user_input_email)
+            return jsonify(result = -1)
 
 
 
 
 if __name__ == "__main__":
-    app.run("0.0.0.0", 6969, debug=True)
+    app.run("0.0.0.0", 8000, debug=False)
 

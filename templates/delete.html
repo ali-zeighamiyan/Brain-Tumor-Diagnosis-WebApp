@@ -48,9 +48,7 @@
        function(data) {
         result = data.result;
         if (result){
-          patients = JSON.parse(storage.getItem("patients"));
-          delete patients[`${localStorage.clicked_number}`];
-          storage.setItem("patients", JSON.stringify(patients));
+          
           $('.modal-backdrop').remove();
           console.log();
           if (modal_image){
@@ -61,6 +59,9 @@
           }
           
           else{
+            patients = JSON.parse(storage.getItem("patients"));
+            delete patients[`${localStorage.clicked_number}`];
+            storage.setItem("patients", JSON.stringify(patients));
           // $('.modal-backdrop').remove();
           close_modal("delete-modal", true);
           var element = document.getElementById(`div${localStorage.clicked_number}`); // Find the element

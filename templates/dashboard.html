@@ -18,9 +18,7 @@
                   
                     <div class="nav-item dropdown">
                         <button class="nav-link user-icon" type="button" id="userDropdown" data-bs-toggle="dropdown"><i class="fa fa-user" aria-hidden="true" style="color: white; font-size: larger;"></i></button>
-                        <!-- <a href="" class="dropdown-toggle" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          <i class="fa fa-user" aria-hidden="true" style="color: white; font-size: larger;"></i>
-                        </a> -->
+ 
                     <ul class="dropdown-menu" aria-labelledby="userDropdown">
                         <li>   
 
@@ -55,10 +53,10 @@
                   </button>
                   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div class="navbar-nav ms-auto">
-                      <a class="nav-link" href="#">About Us</a>
-                      <a class="nav-link" href="#">Services</a>
-                      <a class="nav-link" href="#">tumors</a>
-                      <a class="nav-link" href="{{url_for('home')}}">Home</a>
+                      <a class="nav-link" href="{{url_for('home')}}#footer">Contact</a>
+                      <a class="nav-link" href="{{url_for('home')}}#about-us">About</a>
+                      <a class="nav-link" href="{{url_for('home')}}#services">Services</a>
+                      <a class="nav-link" href="{{url_for('home')}}#banner">Home</a>
                     </div>
                   </div>
                 </div>
@@ -132,7 +130,7 @@
                 </div>
                 
                 <div class="row" id="add-patient-container"></div>
-                
+              
                 <div class="row" id="alert-row"></div>
                 
                 
@@ -200,7 +198,7 @@
       // alert(firstname);
       lastname = patient.l;
       id = patient.i;
-      date = patient.d;
+      date = new Date(patient.d).toDateString();
       note = patient.n;
       diagnose = patient.diagnose;
       div_row.append(card_holder(id)); 
@@ -250,10 +248,9 @@
 
     function edit_button(clicked_id){
       var clicked_number = clicked_id.match(/-?\d+\.?\d*/);
-      // clicked_number = clicked_id[1];
       patients = JSON.parse(localStorage.getItem("patients"));
       patient = patients[clicked_number];
-      
+
       localStorage.firstname = patient.f;
       localStorage.lastname = patient.l;
       localStorage.id = patient.i;
@@ -261,7 +258,7 @@
       localStorage.note = patient.n;
       localStorage.isadd = 0;
 
-      var modal_div = document.createElement("div");
+      modal_div = document.getElementById("add-patient-container");
       modal_div.innerHTML = `<div class="modal fade" data-bs-backdrop="static" id="PatientModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">` +
               `<div class="modal-dialog modal-lg" >` +
               `<div class="modal-content" >` +
@@ -269,7 +266,6 @@
           `</div>`+
         `</div>` ;
 
-      document.body.appendChild(modal_div);
       
       $('#PatientModal').modal('show').find('.modal-content').load("{{url_for('edit')}}");
     }

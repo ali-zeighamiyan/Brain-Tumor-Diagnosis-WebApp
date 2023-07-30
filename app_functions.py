@@ -44,6 +44,27 @@ class Patient(Base):
     doctor_table = relationship("Doctor", back_populates="patient_table")
 
 
+class SendMail:
+    def __init__(self):
+        server = smtplib.SMTP_SSL(EMAIL_HOST, EMAIL_PORT_SSL)
+        self.server = server
+
+    def ckeck_user_exist(self, user_email):
+        
+        self.user_email = user_email
+        self.doctor = session.query(Doctor).filter_by(email=self.user_email).first()
+        if self.doctor: return 1 
+        else : return 0
+    def send_email(self, user_email, token):
+        self.token = token
+        self.user_email = user_email
+        with smtplib.SMTP_SSL(EMAIL_HOST, EMAIL_PORT_SSL) as server:
+            server.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
+            server.sendmail(EMAIL_HOST_USER, self.user_email, self.token)
+        return 1
+            
+        
+
 # Create the database engine
 engine = create_engine('sqlite:///datafile.db')
 
@@ -95,6 +116,7 @@ def convert_bytes_image(image_bytes):
     image_bytes = io.BytesIO(image_bytes)
     return Image.open(image_bytes)
 
+
 def save_patient(datas):
     username = datas["u"]
     id_number = datas["i"]
@@ -105,29 +127,34 @@ def save_patient(datas):
     if datas["d"] == "":
         date = datetime.now()
     else:
-        date = datetime.strptime(datas["d"], "%Y/%m/%d")
+        date = datetime.strptime(datas["d"], "%Y-%m-%d")
 
-    if mri_img != b"":
-        diagnose = model.predict2(convert_bytes_image(mri_img))
-    else:
-        diagnose = ""
-    
+
     doctor_patient = session.scalars(select(Patient).filter_by(id=id_number).filter_by(doctor_email=username)).all()
 
     ##### Create patient if it not exists
     if not doctor_patient:
+        if mri_img != b"":
+            diagnose = model.predict(convert_bytes_image(mri_img))
+        else :
+            diagnose = ""
+
         doctor = session.scalars(select(Doctor).where(Doctor.email.in_([username]))).one()
         patient = Patient(id=int(id_number), firstname=firstname, lastname=lastname, diagnose=diagnose, image_bytes=mri_img, service_date=date, note=note, doctor_table=doctor)
         session.add_all([patient])
 
     ##### Edit patient if it exists
     else:
+        if mri_img != b"":
+            diagnose = model.predict(convert_bytes_image(mri_img))
+            doctor_patient[0].image_bytes = mri_img
+            doctor_patient[0].diagnose = diagnose
+
         doctor_patient[0].lastname = lastname
         doctor_patient[0].firstname = firstname
-        doctor_patient[0].image_bytes = mri_img
         doctor_patient[0].note = note.replace('\r', '\\r').replace('\n', '\\n')
         doctor_patient[0].service_date = date
-        doctor_patient[0].diagnose = diagnose
+        
 
     
     session.commit()
@@ -166,7 +193,7 @@ def delete_patient(username, id, just_delete_image=None):
 def fast_diagnose(datas):
     mri_img = datas["m"].read()
     if mri_img != b"":
-        diagnose = model.predict2(convert_bytes_image(mri_img))
+        diagnose = model.predict(convert_bytes_image(mri_img))
     else:
         diagnose = ""
     
@@ -178,6 +205,12 @@ def get_patient_image(username, id):
     if image_row:
         image_bytes = image_row.image_bytes
         return io.BytesIO(image_bytes)
+
+def update_password(new_password, user_email):
+    doctor = session.query(Doctor).filter_by(email=user_email).first()
+    new_password_hash = bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt())
+    doctor.password_hash = new_password_hash
+    return 1
 
 
 def modify_user_inf(datas):
@@ -197,9 +230,7 @@ def modify_user_inf(datas):
         saved_password_hash = doctor.password_hash
         input_password = input_password.encode("utf-8")
         if bcrypt.checkpw(input_password, saved_password_hash):
-            new_password_hash = bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt())
-            doctor.password_hash = new_password_hash
-            mes_type = 1
+            mes_type = update_password(new_password, username)
             user_or_pass_changed = True
         else:
             return -1
@@ -234,27 +265,6 @@ def get_user_inf(username):
     return contents
 
 
-def send_mail(user_email, token):
-    
-
-    with smtplib.SMTP_SSL(EMAIL_HOST, EMAIL_PORT_SSL) as server:
-        server.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
-        print(1)
-        server.sendmail(EMAIL_HOST_USER, user_email, )
-
-    
-
-
-
-            
-
-
-
-
-
-
-
-# print(get_patient_image("azb1378@gmail.com", "55"))
 
 
 
@@ -267,20 +277,3 @@ def send_mail(user_email, token):
 
 
 
-
-
-
-
-
-# print(add_user({"username":"azb@3516", "pass":"1234", "cpass":"1234"}))
-# print(check_login({"username":"azb@3516", "pass":"1234"}))
-
-# with open("Te-gl_0013.png", "rb") as imagefile:
-#     image_bytes = imagefile.read()
-
-# datas = {"u":"azb@3516", "f":"ali", "l":"zeigh", "i":"234", "d":"2022/03/05", "m":image_bytes, "n":"hey you"}
-
-# save_patient(datas)
-
-# print(get_patient("ali@3516", search_id="23"))
-# delete_patient("ali@3516", "356")
