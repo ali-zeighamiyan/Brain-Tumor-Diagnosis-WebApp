@@ -111,11 +111,13 @@
                     </div>
 
                     <div class="row mt-5">
-                      <p> <b>You Can Simply Upload MRI Photo To Diagnose Without Adding Patient</b> </p>
-                      
-                      <input class="form-control" type="file" name="mri-img" multiple="multiple" id="diagnose-input" accept="image/*">
+                      <span data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="You Can Simply Upload MRI Photo To Diagnose Without Adding Patient!">
+                        <input class="form-control" type="file" name="mri-img" multiple="multiple" id="diagnose-input" accept="image/*">
+                      </span>
 
-                      <button id="fast-btn" class="btn btn-primary" type="button" onclick="show_fast_diagnose_res()">Diagnose</button>
+                    
+
+                      <button id="fast-btn" class="btn btn-primary" type="button" onclick="show_fast_diagnose_res()" style="margin-left: 10px;">Diagnose</button>
 
                     
                       <p id="diagnose-result"></p>
@@ -144,6 +146,10 @@
 
 
     <script>
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+  })
 
     console.log()
       try
