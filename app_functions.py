@@ -10,8 +10,8 @@ from sqlalchemy import select
 import smtplib
 
 EMAIL_HOST = "smtp.gmail.com"
-EMAIL_HOST_USER = "azb1378@gmail.com"
-EMAIL_HOST_PASSWORD = "dkekzjnsjyzuabka"
+EMAIL_HOST_USER = "YourEmail@gmail.com"
+EMAIL_HOST_PASSWORD = "PassWord"
 EMAIL_PORT_SSL = 465
 
 from load_saved_model import load_model
@@ -69,7 +69,8 @@ class SendMail:
 engine = create_engine('sqlite:///datafile.db')
 
 # Create the tables in the database
-# Base.metadata.create_all(engine)
+if "datafile.db" not in os.listdir("/"):
+    Base.metadata.create_all(engine)
 
 # Create a session
 Session = sessionmaker(bind=engine)
