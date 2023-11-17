@@ -9,6 +9,7 @@
 ### Open `cmd` and go to `Brain-Tumor-Diagnosis-WebApp` folder
 ### Install dependencies in `requirements.txt` using `pip install requirements.txt`
 ### Then to run the APP just write this command  `python app.py`
+#### If you want the trained model you can get it from `https://drive.google.com/file/d/1G0LOKDIen_Ytl5kHLiHz6wSlw24Ti5tl/view?usp=sharing`. Then just copy the downloaded .h5 file to `trained_models` folder.
 
 ## Notes
 ### It is better to create a virtual enviroment using `conda` or `python venv` and then run the program in it.
