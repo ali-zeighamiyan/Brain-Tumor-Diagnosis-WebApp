@@ -1,5 +1,6 @@
 tensorflow==2.13
 flask_cors
-sqlalchemy
+lxml
+sqlalchemy==2.0.12
 pillow
 bcrypt
