@@ -1,9 +1,6 @@
-Flask
-Flask-Cors
+tensorflow==2.13
+flask_cors
 lxml
-numpy
-oauthlib
-protobuf
-tensorflow
-urllib3
-SQLAlchemy
+sqlalchemy
+pillow
+bcrypt
